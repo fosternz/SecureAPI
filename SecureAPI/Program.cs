@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -23,6 +24,16 @@ builder.Services.AddAuthentication("Bearer")
                 builder.Configuration.GetValue<string>("Authentication:SecretKey")))
         };
     });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("MustHaveStaffId", policy =>
+    {
+        policy.RequireClaim("staffId");
+    });
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 var app = builder.Build();
 

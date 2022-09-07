@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,7 +15,7 @@ public class AuthenticationController : ControllerBase
     public IConfiguration _config { get; }
 
     public record AuthenticationData(string? UserName, string? Password);
-    public record UserData(int Id, string Name);
+    public record UserData(int Id, string Name, string Title, string StaffId);
 
     public AuthenticationController(IConfiguration config)
     {
@@ -23,6 +24,7 @@ public class AuthenticationController : ControllerBase
 
 
     [HttpPost("token")]
+    [AllowAnonymous]
     public ActionResult<string> Authenticate([FromBody] AuthenticationData data)
     {
         var user = ValidateCredentials(data);
@@ -48,6 +50,8 @@ public class AuthenticationController : ControllerBase
         List<Claim> claims = new();
         claims.Add(new(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
         claims.Add(new(JwtRegisteredClaimNames.UniqueName, user.Name.ToString()));
+        claims.Add(new("title", user.Title));
+        claims.Add(new("staffId", user.StaffId));
 
         var token = new JwtSecurityToken(
             _config.GetValue<string>("Authentication:Issuer"),
@@ -67,7 +71,7 @@ public class AuthenticationController : ControllerBase
 
         if (CompareValues(data.UserName, "Luke") && CompareValues(data.Password, "test123"))
         {
-            return new UserData(1, data.UserName!);
+            return new UserData(1, data.UserName!, "Engineer", "S01");
         }
 
         return null;
