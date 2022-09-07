@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using SecureAPI.Constants;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,8 +27,13 @@ builder.Services.AddAuthentication("Bearer")
     });
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("MustHaveStaffId", policy =>
+    options.AddPolicy(PolicyConstants.MustHaveStaffId, policy =>
     {
+        policy.RequireClaim("staffId");
+    });
+    options.AddPolicy(PolicyConstants.MustBeEngineer, policy =>
+    {
+        policy.RequireClaim("title", "Engineer");
         policy.RequireClaim("staffId");
     });
     options.FallbackPolicy = new AuthorizationPolicyBuilder()

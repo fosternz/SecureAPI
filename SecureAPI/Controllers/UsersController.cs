@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using SecureAPI.Constants;
 
 namespace SecureAPI.Controllers;
 
@@ -26,7 +26,7 @@ public class UsersController : ControllerBase
     // GET api/<UsersController>/5
     [HttpGet("{id}")]
     //[Authorize]
-    [Authorize(Policy = "MustHaveStaffId")]
+    [Authorize(Policy = PolicyConstants.MustHaveStaffId)]
     public string Get(int id)
     {
         return _config.GetConnectionString("Default");
@@ -35,6 +35,8 @@ public class UsersController : ControllerBase
 
     // POST api/<UsersController>
     [HttpPost]
+    [Authorize(Policy = PolicyConstants.MustHaveStaffId)]
+    [Authorize(Policy = PolicyConstants.MustBeEngineer)]
     public void Post([FromBody] string value)
     {
     }
