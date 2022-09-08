@@ -4,8 +4,10 @@ using SecureAPI.Constants;
 
 namespace SecureAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
+[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 public class UsersController : ControllerBase
 {
     public IConfiguration _config { get; }
