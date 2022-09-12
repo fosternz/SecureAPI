@@ -58,7 +58,7 @@ public class AuthenticationController : ControllerBase
             _config.GetValue<string>("Authentication:Audience"),
             claims,
             DateTime.UtcNow, // Time token is valid
-            DateTime.UtcNow.AddMinutes(1), // When token expires
+            DateTime.UtcNow.AddMinutes(60), // When token expires
             signingCredentials
         );
 

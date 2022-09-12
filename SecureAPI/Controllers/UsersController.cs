@@ -12,10 +12,12 @@ public class UsersController : ControllerBase
 {
     public IConfiguration _config { get; }
 
-    public UsersController(IConfiguration config)
+    private readonly ILogger<UsersController> _logger;
+
+    public UsersController(IConfiguration config, ILogger<UsersController> logger)
     {
         _config = config;
-
+        _logger = logger;
     }
 
     // GET: api/<UsersController>
@@ -31,6 +33,11 @@ public class UsersController : ControllerBase
     [Authorize(Policy = PolicyConstants.MustHaveStaffId)]
     public string Get(int id)
     {
+        if (id < 0)
+        {
+            _logger.LogWarning("Id ({id}) was negative.", id);
+        }
+
         return _config.GetConnectionString("Default");
 
     }
