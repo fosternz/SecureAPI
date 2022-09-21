@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecureAPI.Constants;
+using SecureAPI.Models;
 
 namespace SecureAPI.Controllers;
 
@@ -46,8 +47,13 @@ public class UsersController : ControllerBase
     [HttpPost]
     [Authorize(Policy = PolicyConstants.MustHaveStaffId)]
     [Authorize(Policy = PolicyConstants.MustBeEngineer)]
-    public void Post([FromBody] string value)
+    public IActionResult Post([FromBody] UserModel user)
     {
+        if(ModelState.IsValid)
+        {
+            return Ok();
+        }
+        return BadRequest(ModelState);
     }
 
     // PUT api/<UsersController>/5
@@ -60,5 +66,13 @@ public class UsersController : ControllerBase
     [HttpDelete("{id}")]
     public void Delete(int id)
     {
+    }
+
+    // GET: api/<UsersController>
+    [HttpGet("/cache")]
+    [ResponseCache(Duration = 20, Location = ResponseCacheLocation.Any, NoStore = false)]
+    public IEnumerable<string> GetCacheExample()
+    {
+        return new string[] { "value1", "value2" };
     }
 }
